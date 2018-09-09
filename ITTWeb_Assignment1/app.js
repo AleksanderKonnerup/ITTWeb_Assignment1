@@ -47,6 +47,11 @@ MongoClient.connect(url,{useNewUrlParser:true},
   try{
   if(db.isConnected){
     console.log("Connected succesfully to MongoDb server");
+    var collection = db.db("ITTWeb_Assignment1_DB").collection("WorkOutPrograms");
+    collection.findOne({}, function (findErr, result) {
+      if (findErr) throw findErr;
+      console.log(result.Exercise.name);
+    });
   }
   db.close();
 } catch(err){
