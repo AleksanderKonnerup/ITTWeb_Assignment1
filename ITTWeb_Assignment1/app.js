@@ -7,7 +7,7 @@ var logger = require('morgan');
 var indexRouter = require('./routes/mainView');
 var usersRouter = require('./routes/users');
 
-var MongoClient = require('mongodb').MongoClient;
+//var MongoClient = require('mongodb').MongoClient;
 
 var app = express();
 
@@ -41,21 +41,21 @@ app.use(function(err, req, res, next) {
 
 });
 
-var url = 'mongodb://localhost:27017/ITTWeb_Assignment1_DB';
-MongoClient.connect(url,{useNewUrlParser:true}, 
-  function(err, db){
-  try{
-  if(db.isConnected){
-    console.log("Connected succesfully to MongoDb server");
-    var collection = db.db("ITTWeb_Assignment1_DB").collection("WorkOutPrograms");
-    collection.findOne({}, function (findErr, result) {
-      if (findErr) throw findErr;
-      console.log(result.Exercise.name);
-    });
-  }
-  db.close();
-} catch(err){
-return console.dir(err);
-}});
+// var url = 'mongodb://localhost:27017/ITTWeb_Assignment1_DB';
+// MongoClient.connect(url,{useNewUrlParser:true}, 
+//   function(err, db){
+//   try{
+//   if(db.isConnected){
+//     console.log("Connected succesfully to MongoDb server");
+//     var collection = db.db("ITTWeb_Assignment1_DB").collection("WorkOutPrograms");
+//     collection.findOne({}, function (findErr, result) {
+//       if (findErr) throw findErr;
+//       console.log(result.Exercise.name);
+//     });
+//   }
+//   db.close();
+// } catch(err){
+// return console.dir(err);
+// }});
 
 module.exports = app;

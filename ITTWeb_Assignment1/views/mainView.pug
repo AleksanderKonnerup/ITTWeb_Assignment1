@@ -1,31 +1,27 @@
 extends layout
 
 block content
+  script(src="/javascripts/mainView.js")
   h1=title
   br
   br
-  h2 Recent Exercise Program:
-  table.center#RecentExerciseProgram
+  h2 Recent WorkOut Program:
+  table.center#RecentWorkOutProgram
     tr#headings
       th(height='40px') Excercise
       th Description
       th Set
       th Reps/time
-    tr#Exercises
-      td(height='50px') Name
-      td Description
-      td Set
-      td Reps/time
-      
-    //- - var exerciseList = getPreviousExerciseProgram(); //Skal retunere en Sidst oprettede Exercise program, indeholder en liste af Exercises
-        each item in exerciseList
-          th Excercise.name
-          th Excercise.description
-          th Excercise.set
-          th Excercise.repsOrtime 
-  div.clearfix      
+    tr#Exercises    
+      script
+        include ../public/javascripts/mainView.js
+      each item in getPreviousWorkOutProgram()
+        td(height='50px') item.Exercise.name
+        td item.Excercise.description
+        td item.Excercise.set
+        td item.Excercise.repsOrtime    
   br
-  button.btn-success#createWorkOut.onclick(createExerciseProgram();) Create new WorkOut program
+  button.btn-success#createWorkOut.onclick(createWorkOutProgram();) Create new WorkOut program
   button.btn-default#editWorkOut Edit WorkOut program
   button.btn-danger#deleteWorkout  Delete WorkOut program
   br
