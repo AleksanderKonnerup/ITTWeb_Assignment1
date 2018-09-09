@@ -1,0 +1,52 @@
+body {
+  padding: 50px;
+  font: 14px "Times New Roman", sans-serif;
+  background-color: lightblue;
+  color: blue;
+  text-align: center;
+}
+
+a {
+  color: #00B7FF;
+}
+
+h1 {
+  font: 24px "Palatino" bold;
+  color: darkblue;
+}
+
+h2{
+  font: 18px "Palatino" bold;
+  color: blue;
+}
+
+#table-wrapper {
+  display: flex;
+}
+
+#newTable {
+  visibility: hidden;
+}
+
+table {
+  width: 15em;
+  border-collapse: collapse;
+  align-self: inherit;
+}
+
+table.center {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+th {
+  background-color: lightgreen;
+  padding: 1em;
+  border: 1px solid black;
+  padding: 1em;
+}
+  
+td {
+  border: 1px solid black;
+  padding: 1em;
+}
