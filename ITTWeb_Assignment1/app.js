@@ -4,10 +4,10 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
-var indexRouter = require('./routes/mainView');
+var mainViewRouter = require('./routes/mainView.route');
 var usersRouter = require('./routes/users');
 
-//var MongoClient = require('mongodb').MongoClient;
+var Exercise = require('./routes/exercise.route')
 
 var app = express();
 
@@ -21,8 +21,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
+app.use('/', mainViewRouter);
 app.use('/users', usersRouter);
+app.use('/exercise', Exercise);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -40,22 +41,5 @@ app.use(function(err, req, res, next) {
   res.render('error');
 
 });
-
-// var url = 'mongodb://localhost:27017/ITTWeb_Assignment1_DB';
-// MongoClient.connect(url,{useNewUrlParser:true}, 
-//   function(err, db){
-//   try{
-//   if(db.isConnected){
-//     console.log("Connected succesfully to MongoDb server");
-//     var collection = db.db("ITTWeb_Assignment1_DB").collection("WorkOutPrograms");
-//     collection.findOne({}, function (findErr, result) {
-//       if (findErr) throw findErr;
-//       console.log(result.Exercise.name);
-//     });
-//   }
-//   db.close();
-// } catch(err){
-// return console.dir(err);
-// }});
 
 module.exports = app;
