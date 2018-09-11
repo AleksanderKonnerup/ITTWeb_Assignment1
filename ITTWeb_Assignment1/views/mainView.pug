@@ -5,29 +5,26 @@ block content
   br
   br
   h2 Recent WorkOut Program:
-  table.center#RecentWorkOutProgram
+  table.center
     tr#headings
       th(height='40px') Excercise
       th Description
       th Set
       th Reps/time
+
+  unless exercises == null
     tr#Exercises
-      form(action="/", method="get")
-        
-          td(height='50px') item.Exercise.name
-          td item.Excercise.description
-          td item.Excercise.set
-          td item.Excercise.repsOrtime    
-  br
-  button.btn-success#createWorkOut.onclick(createWorkOutProgram();) Create new WorkOut program
-  button.btn-default#editWorkOut Edit WorkOut program
-  button.btn-danger#deleteWorkout  Delete WorkOut program
+        each item in exercises
+            td(height='50px') #{item.name}
+            td #{item.description}
+            td #{item.set}
+            td #{item.repsOrTime}
   br
   br
-  form(action="/exercise/create", method="post")
-    input(type="text", name="ExerciseName", placeholder="Exercise Name")
-    input(type="text", name="ExerciseDescription", placeholder="Exercise Description")
-    input(type="number", name="ExerciseSets", placeholder="Exercise Sets")
-    input(type="number", name="ExerciseRepsOrTime", placeholder="Exercise Repetitions/Time")
+  form(action="/create", method="post")
+    input(type="text", name="name", placeholder="Exercise Name")
+    input(type="text", name="description", placeholder="Exercise Description")
+    input(type="number", name="set", placeholder="Exercise Sets")
+    input(type="number", name="repsOrTime", placeholder="Exercise Repetitions/Time")
     input(type="submit", class="btn-success", name="Add new Exercise")
 
