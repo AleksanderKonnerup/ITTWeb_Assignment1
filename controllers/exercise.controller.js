@@ -35,18 +35,45 @@ const remove = function(req, res) {
 };
 
 const getAllExercises = function(req, res) {
-    var resultArray = [];
+    var _exerciseArray = [];
+    var workoutArray = [];
+    var workProgram = "WorkOutPrograms";
+
     MongoClient.connect(url,{useNewUrlParser:true},function(err, db){
-    db.db("test").collection("WorkOutPrograms").find({}, (err, data) => {
+        if(req.body.name !== undefined)
+        {
+            workProgram = req.body.name;
+        }
+
+    db.db("test").collection(workProgram).find({}, (err, data) => {
         assert.equal(null, err);
         data.forEach(element => {
-            resultArray.push(element);
+            _exerciseArray.push(element);
         }).then(() => {
-            res.render("mainView", {exercises_Array : resultArray});
+            getAllWorkOutPrograms(function(err, result){
+                assert.equal(null, err);
+                result.forEach(x => {
+                    workoutArray.push(x);
+                });
+                res.render("mainView", {exercises_Array : _exerciseArray, workOutPrograms_Array : workoutArray});
+            });
         });
     })
 })};
 
+const getAllWorkOutPrograms = function(callback) {
+    var _workOutArray = [];
+
+    MongoClient.connect(url,{useNewUrlParser:true},function(err, db){
+    var collections = db.db("test").listCollections({});
+    console.log(collections);
+    collections.forEach(element => {
+        _workOutArray.push(element);
+    }).then(() => {
+        callback(null, _workOutArray);
+    });
+    });
+};
 
 module.exports = {
     create, 

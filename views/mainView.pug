@@ -4,33 +4,56 @@ block content
   h1=title
   br
   br
-  h2 Recent WorkOut Program:
+  h2 Current Workout Program:
   table.center
     thead
-      tr#headings
+      tr
         th(height='40px') Excercise
         th Description
         th Set
         th Reps/time
     tbody
-      -if(exercises_Array !== null)
-        for item in exercises_Array
+        for exercise in exercises_Array
             tr
-              td(height='50px', width='20%')= item.name
-              td(width='60%')= item.description
-              td(width='10%')= item.set
-              td(width='10%')= item.repsOrTime
+              td= exercise.name
+              td= exercise.description
+              td= exercise.set
+              td= exercise.repsOrTime
 
               td(style="border-style:none") 
                 form(action="/remove", method="post")
-                  input(type="hidden", name="name", value=item.name)
+                  input(type="hidden", name="name", value=exercise.name)
                   input(type="submit", class="btn-danger", value="Remove Exercise")
   br
   br
-  form(action="/create", method="post")
+  form(action="/createExercise", method="post")
     input(type="text", name="name", placeholder="Exercise Name")
     input(type="text", name="description", placeholder="Exercise Description")
     input(type="number", name="set", placeholder="Exercise Sets")
     input(type="number", name="repsOrTime", placeholder="Exercise Repetitions/Time")
     input(type="submit", class="btn-success", value="Add new Exercise")
+  br
+  br
+  h2 All Workout Programs:
+  table.center
+    thead
+      tr
+        th(height='40px') Workout Program
+      tbody
+        -if(workOutPrograms_Array !== undefined)
+        for workOutProgram in  workOutPrograms_Array
+          tr
+            td= workOutProgram.name
+            td(style="border-style:none")
+              form(action="/selectWorkOut", method="get")
+                input(type="submit", class="btn-success ", value="Select Program")
+            td(style="border-style:none")
+              form(action="/removeWorkout", method="post")
+                input(type="hidden", name="name", value=workOutProgram.name)
+                input(type="submit", class="btn-danger", value="Remove Workout Program")
+  br
+  br
+  form(action="/createWorkoutProgram", method="post")
+    input(type="text", name="name", placeholder="Workout program name")
+    input(type="submit", class="btn-success", value="Add new Workout program")
 
