@@ -6,19 +6,25 @@ block content
   br
   h2 Recent WorkOut Program:
   table.center
-    tr#headings
-      th(height='40px') Excercise
-      th Description
-      th Set
-      th Reps/time
+    thead
+      tr#headings
+        th(height='40px') Excercise
+        th Description
+        th Set
+        th Reps/time
+    tbody
+      -if(exercises_Array !== null)
+        for item in exercises_Array
+            tr
+              td(height='50px', width='20%')= item.name
+              td(width='60%')= item.description
+              td(width='10%')= item.set
+              td(width='10%')= item.repsOrTime
 
-  unless exercises == null
-    tr#Exercises
-        each item in exercises
-            td(height='50px') #{item.name}
-            td #{item.description}
-            td #{item.set}
-            td #{item.repsOrTime}
+              td(style="border-style:none") 
+                form(action="/remove", method="post")
+                  input(type="hidden", name="name", value=item.name)
+                  input(type="submit", class="btn-danger", value="Remove Exercise")
   br
   br
   form(action="/create", method="post")
@@ -26,5 +32,5 @@ block content
     input(type="text", name="description", placeholder="Exercise Description")
     input(type="number", name="set", placeholder="Exercise Sets")
     input(type="number", name="repsOrTime", placeholder="Exercise Repetitions/Time")
-    input(type="submit", class="btn-success", name="Add new Exercise")
+    input(type="submit", class="btn-success", value="Add new Exercise")
 
