@@ -4,7 +4,8 @@ const mongoose = require('mongoose');
 const Exercise = require('../models/Exercise');
 const assert = require('assert');
 
-const create = function(req, res) {
+//#region Exercises
+const createExercise = function(req, res) {
     var exercise = {name: req.body.name,
     description: req.body.description,
     set: req.body.set,
@@ -21,7 +22,7 @@ const create = function(req, res) {
     })
 };
 
-const remove = function(req, res) {
+const removeExercise = function(req, res) {
     MongoClient.connect(url,{useNewUrlParser:true},function(err, db){
         assert.equal(null, err);
         
@@ -35,14 +36,14 @@ const remove = function(req, res) {
 };
 
 const getAllExercises = function(req, res) {
-    var _exerciseArray = [];
-    var workoutArray = [];
+    let _exerciseArray = [];
+    let workoutArray = [];
     var workProgram = "WorkOutPrograms";
 
     MongoClient.connect(url,{useNewUrlParser:true},function(err, db){
         if(req.body.name !== undefined)
         {
-            workProgram = req.body.name;
+            workProgram = req.body.name.toString();
         }
 
     db.db("test").collection(workProgram).find({}, (err, data) => {
@@ -60,23 +61,95 @@ const getAllExercises = function(req, res) {
         });
     })
 })};
+//#endregion
 
+//#region Workouts
 const getAllWorkOutPrograms = function(callback) {
-    var _workOutArray = [];
+    let _workOutArray = [];
 
     MongoClient.connect(url,{useNewUrlParser:true},function(err, db){
-    var collections = db.db("test").listCollections({});
-    console.log(collections);
-    collections.forEach(element => {
-        _workOutArray.push(element);
-    }).then(() => {
-        callback(null, _workOutArray);
-    });
+        var collections = db.db("test").listCollections({});
+        collections.forEach(element => {
+            _workOutArray.push(element);
+        }).then(() => {
+            callback(null, _workOutArray);
+        });
     });
 };
 
+const selectWorkOut = function(req, res) {
+    let _exerciseArray = [];
+    let workoutArray = [];
+    let workOutName;
+
+    if(req.body.selectWorkOutName === undefined){
+        workOutName = "WorkOutPrograms";
+    } else{
+        workOutName = req.body.selectWorkOutName.toString();
+    }
+    MongoClient.connect(url,{useNewUrlParser:true},function(err, db){
+        assert.equal(null, err);
+        db.db("test").collection(workOutName).find({}, (err, data) => {
+        assert.equal(null, err);
+        data.forEach(element => {
+            _exerciseArray.push(element);
+        }).then(() => {
+            getAllWorkOutPrograms(function(err, result){
+                assert.equal(null, err);
+                result.forEach(x => {
+                    workoutArray.push(x);
+                });
+                res.render("mainView", {exercises_Array : _exerciseArray, workOutPrograms_Array : workoutArray});
+            });
+            });
+        });
+    })
+};
+
+const removeWorkout = function(req, res) {
+    MongoClient.connect(url,{useNewUrlParser:true},function(err, db){
+        assert.equal(null, err);
+        let workOutName;
+        if(req.body.removeWorkOutName === undefined){
+            console.log(err);
+            res.redirect("/");
+        } else {
+            workOutName = req.body.removeWorkOutName.toString();
+        
+            db.db("test").collection(workOutName).drop().then(function(err, result){
+                console.log("WorkOut deleted");
+                res.redirect("/");
+        });
+    }})
+};
+
+const createWorkoutProgram = function(req, res){
+    let _exerciseArray = [];
+    let workoutArray = [];
+    let workOutName;
+
+    if(req.body.createWorkoutName === undefined){
+        console.log(err);
+        res.redirect("/");
+    } else{
+        workOutName = req.body.createWorkoutName.toString();
+        MongoClient.connect(url,{useNewUrlParser:true},function(err, db){
+            assert.equal(null, err);
+            var collection = db.db("test").createCollection(workOutName).then(
+                function(err, result){
+                console.log("New Workout created");
+                res.redirect("/")}).catch(res.redirect("/"));
+        });
+    } //Collectionen oprettes først når der tilføjes et document til collection, men kan ikke få insert til at virke...
+};
+
+//#endregion
+
 module.exports = {
-    create, 
-    remove,
-    getAllExercises
+    createExercise, 
+    removeExercise,
+    getAllExercises,
+    selectWorkOut,
+    removeWorkout,
+    createWorkoutProgram
 };

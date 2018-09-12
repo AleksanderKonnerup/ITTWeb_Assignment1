@@ -13,6 +13,7 @@ block content
         th Set
         th Reps/time
     tbody
+      -if(exercises_Array !== undefined)
         for exercise in exercises_Array
             tr
               td= exercise.name
@@ -21,7 +22,7 @@ block content
               td= exercise.repsOrTime
 
               td(style="border-style:none") 
-                form(action="/remove", method="post")
+                form(action="/removeExercise", method="post")
                   input(type="hidden", name="name", value=exercise.name)
                   input(type="submit", class="btn-danger", value="Remove Exercise")
   br
@@ -45,15 +46,16 @@ block content
           tr
             td= workOutProgram.name
             td(style="border-style:none")
-              form(action="/selectWorkOut", method="get")
+              form(action="/selectWorkOut", method="post")
+                input(type="hidden", name="selectWorkOutName", value=workOutProgram.name)
                 input(type="submit", class="btn-success ", value="Select Program")
             td(style="border-style:none")
               form(action="/removeWorkout", method="post")
-                input(type="hidden", name="name", value=workOutProgram.name)
+                input(type="hidden", name="removeWorkOutName", value=workOutProgram.name)
                 input(type="submit", class="btn-danger", value="Remove Workout Program")
   br
   br
   form(action="/createWorkoutProgram", method="post")
-    input(type="text", name="name", placeholder="Workout program name")
+    input(type="text", name="createWorkoutName", placeholder="Workout program name")
     input(type="submit", class="btn-success", value="Add new Workout program")
 
