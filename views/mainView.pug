@@ -1,10 +1,10 @@
 extends layout
 
 block content
-  h1=title
+  h1 ITTWeb FitnessApp Gruppe2
   br
   br
-  h2 Current Workout Program:
+  h2 Current Workout Program: #{currentWorkOutname}
   table.center
     thead
       tr
@@ -28,6 +28,7 @@ block content
   br
   br
   form(action="/createExercise", method="post")
+    input(type="hidden", name="currentWorkOutname", value=currentWorkOutname)
     input(type="text", name="name", placeholder="Exercise Name")
     input(type="text", name="description", placeholder="Exercise Description")
     input(type="number", name="set", placeholder="Exercise Sets")

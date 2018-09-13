@@ -1,8 +1,9 @@
 const MongoClient = require('mongodb').MongoClient;
-const url = "mongodb+srv://test:test@ittwebassignment1-9rxs5.mongodb.net/test?retryWrites=true";
+const url = "mongodb+srv://test:test@ittwebassignment1-9rxs5.mongodb.net/test";
 const mongoose = require('mongoose');
 const Exercise = require('../models/Exercise');
 const assert = require('assert');
+global.currentWorkOutProgram = "WorkOutPrograms";
 
 //#region Exercises
 const createExercise = function(req, res) {
@@ -11,15 +12,20 @@ const createExercise = function(req, res) {
     set: req.body.set,
     repsOrTime: req.body.repsOrTime};
 
+    if(req.body.currentWorkOutname !== undefined){
+        global.currentWorkOutProgram = req.body.currentWorkOutname.toString();
+    }
+
     MongoClient.connect(url,{useNewUrlParser:true},function(err, db){
         assert.equal(null, err);
-        
-        db.db('test').collection("WorkOutPrograms").insertOne(exercise, function(err, result){
+        db.db('test').collection(global.currentWorkOutProgram).insertOne(exercise, function(err, result){
             assert.equal(null,err);
             console.log("Exercise added");
-            res.redirect("/");
+
+            res.redirect('/');
         });
     })
+    
 };
 
 const removeExercise = function(req, res) {
@@ -27,7 +33,7 @@ const removeExercise = function(req, res) {
         assert.equal(null, err);
         
         var name = req.body.name;
-        db.db("test").collection("WorkOutPrograms").findOneAndDelete({"name" : name },function(err, result){
+        db.db("test").collection(global.currentWorkOutProgram).findOneAndDelete({"name" : name },function(err, result){
             assert.equal(null, err);
             console.log("Exercise deleted");
             res.redirect("/");
@@ -38,15 +44,14 @@ const removeExercise = function(req, res) {
 const getAllExercises = function(req, res) {
     let _exerciseArray = [];
     let workoutArray = [];
-    var workProgram = "WorkOutPrograms";
 
     MongoClient.connect(url,{useNewUrlParser:true},function(err, db){
-        if(req.body.name !== undefined)
+        if(req.body.name !== undefined && req.body.name !== "")
         {
-            workProgram = req.body.name.toString();
+            global.currentWorkOutProgram = req.body.name.toString();
         }
 
-    db.db("test").collection(workProgram).find({}, (err, data) => {
+        db.db("test").collection(global.currentWorkOutProgram).find({}, (err, data) => {
         assert.equal(null, err);
         data.forEach(element => {
             _exerciseArray.push(element);
@@ -56,7 +61,7 @@ const getAllExercises = function(req, res) {
                 result.forEach(x => {
                     workoutArray.push(x);
                 });
-                res.render("mainView", {exercises_Array : _exerciseArray, workOutPrograms_Array : workoutArray});
+                res.render("mainView", {exercises_Array : _exerciseArray, workOutPrograms_Array : workoutArray, currentWorkOutname : global.currentWorkOutProgram});
             });
         });
     })
@@ -80,16 +85,14 @@ const getAllWorkOutPrograms = function(callback) {
 const selectWorkOut = function(req, res) {
     let _exerciseArray = [];
     let workoutArray = [];
-    let workOutName;
 
-    if(req.body.selectWorkOutName === undefined){
-        workOutName = "WorkOutPrograms";
-    } else{
-        workOutName = req.body.selectWorkOutName.toString();
+    if(req.body.selectWorkOutName !== undefined){
+        global.currentWorkOutProgram = req.body.selectWorkOutName.toString();
     }
+
     MongoClient.connect(url,{useNewUrlParser:true},function(err, db){
         assert.equal(null, err);
-        db.db("test").collection(workOutName).find({}, (err, data) => {
+        db.db("test").collection(global.currentWorkOutProgram).find({}, (err, data) => {
         assert.equal(null, err);
         data.forEach(element => {
             _exerciseArray.push(element);
@@ -99,7 +102,7 @@ const selectWorkOut = function(req, res) {
                 result.forEach(x => {
                     workoutArray.push(x);
                 });
-                res.render("mainView", {exercises_Array : _exerciseArray, workOutPrograms_Array : workoutArray});
+                res.render("mainView", {exercises_Array : _exerciseArray, workOutPrograms_Array : workoutArray, currentWorkOutname : global.currentWorkOutProgram});
             });
             });
         });
@@ -109,14 +112,14 @@ const selectWorkOut = function(req, res) {
 const removeWorkout = function(req, res) {
     MongoClient.connect(url,{useNewUrlParser:true},function(err, db){
         assert.equal(null, err);
-        let workOutName;
+        
         if(req.body.removeWorkOutName === undefined){
             console.log(err);
             res.redirect("/");
         } else {
-            workOutName = req.body.removeWorkOutName.toString();
+            global.currentWorkOutProgram = req.body.removeWorkOutName.toString();
         
-            db.db("test").collection(workOutName).drop().then(function(err, result){
+            db.db("test").collection(global.currentWorkOutProgram).drop().then(function(err, result){
                 console.log("WorkOut deleted");
                 res.redirect("/");
         });
@@ -126,19 +129,18 @@ const removeWorkout = function(req, res) {
 const createWorkoutProgram = function(req, res){
     let _exerciseArray = [];
     let workoutArray = [];
-    let workOutName;
 
     if(req.body.createWorkoutName === undefined){
         console.log(err);
         res.redirect("/");
     } else{
-        workOutName = req.body.createWorkoutName.toString();
+        global.currentWorkOutProgram = req.body.createWorkoutName.toString();
         MongoClient.connect(url,{useNewUrlParser:true},function(err, db){
             assert.equal(null, err);
-            var collection = db.db("test").createCollection(workOutName).then(
-                function(err, result){
+            db.db("test").createCollection(global.currentWorkOutProgram,function(err, result){
                 console.log("New Workout created");
-                res.redirect("/")}).catch(res.redirect("/"));
+                db.close();
+                res.redirect("/")});
         });
     } //Collectionen oprettes først når der tilføjes et document til collection, men kan ikke få insert til at virke...
 };
